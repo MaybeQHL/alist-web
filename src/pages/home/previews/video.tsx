@@ -11,6 +11,7 @@ import flvjs from "flv.js"
 import Hls from "hls.js"
 import { currentLang } from "~/app/i18n"
 import { VideoBox } from "./video_box"
+import * as danmakuApi from "../../../danmaku"
 
 const Preview = () => {
   const { replace, pathname } = useRouter()
@@ -112,7 +113,13 @@ const Preview = () => {
   if (danmu) {
     option.plugins = [
       artplayerPluginDanmuku({
-        danmuku: proxyLink(danmu, true),
+        // danmuku: proxyLink(danmu, true),
+        // 使用 Promise 异步返回
+        danmuku: async function () {
+          console.log("pathname", pathname())
+          const res = await danmakuApi.search("斗破苍穹", "1")
+          return res.list
+        },
         speed: 5,
         opacity: 1,
         fontSize: 25,
