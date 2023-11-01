@@ -110,7 +110,8 @@ const Preview = () => {
       type: ext(subtitle.name) as any,
     }
   }
-  if (danmu) {
+  // if(danmu)
+  if (true) {
     option.plugins = [
       artplayerPluginDanmuku({
         // danmuku: proxyLink(danmu, true),

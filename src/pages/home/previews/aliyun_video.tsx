@@ -9,6 +9,7 @@ import artplayerPluginDanmuku from "artplayer-plugin-danmuku"
 import Hls from "hls.js"
 import { currentLang } from "~/app/i18n"
 import { VideoBox } from "./video_box"
+import * as danmakuApi from "../../../danmaku"
 
 export interface Data {
   drive_id: string
@@ -118,25 +119,48 @@ const Preview = () => {
       type: ext(subtitle.name) as any,
     }
   }
-  if (danmu) {
+  // if(danmu)
+
+  if (true) {
     option.plugins = [
       artplayerPluginDanmuku({
-        danmuku: proxyLink(danmu, true),
+        // danmuku: proxyLink(danmu, true),
+        // 使用 Promise 异步返回
+        danmuku: async function () {
+          // console.log("pathname", pathname())
+          const pname = pathname()
+          const fileName = pname.substring(
+            pname.lastIndexOf("/") + 1,
+            pname.lastIndexOf("."),
+          )
+          const info = fileName.split("-")
+          const name = info[0]
+          const epNumber = info[1]
+          const res = await danmakuApi.search(name, epNumber)
+          return res.list
+        },
         speed: 5,
-        opacity: 1,
-        fontSize: 25,
-        color: "#FFFFFF",
-        mode: 0,
-        margin: [0, "0%"],
-        antiOverlap: false,
-        useWorker: true,
-        synchronousPlayback: false,
-        lockTime: 5,
-        maxLength: 100,
-        minWidth: 200,
-        maxWidth: 400,
-        theme: "dark",
+        fontSize: 20,
+        margin: [10, "25%"],
+        opacity: 0.75,
+        antiOverlap: true, // 是否防重叠
       }),
+      // artplayerPluginDanmuku({
+      //   danmuku: proxyLink(danmu, true),
+      //   speed: 5,
+      //   opacity: 1,
+      //   fontSize: 25,
+      //   color: "#FFFFFF",
+      //   mode: 0,
+      //   margin: [0, "0%"],
+      //   antiOverlap: false,
+      //   useWorker: true,
+      //   synchronousPlayback: false,
+      //   lockTime: 5,
+      //   maxLength: 100,
+      //   minWidth: 200,
+      //   maxWidth: 400,
+      //   theme: "dark",
     ]
   }
   const [loading, post] = useFetch(
